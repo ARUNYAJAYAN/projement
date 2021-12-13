@@ -14,14 +14,16 @@ admin/ management can create, update, list and retrive project, companies, devel
 developers can update project information and add additional developement hours
 
 
-Token based authentication and role based authorization(Admin or employer and developer)
+Token based authentication and role based authorization(Admin or management and developer)
 
 
 Fully functional Django-Admin panel.
 
 
 UserStory:
-User can register based on role and can login.
+User can register based on role and can login. When you are registering a user for an admin user give groups[1], for a developer give groups[2] and for a management groups[3].
+JSON body structure available in postman collection, you can refer it.
+
 
 Steps for Installation and Running:
 
