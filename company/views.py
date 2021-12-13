@@ -15,7 +15,7 @@ class CompanyList(generics.ListCreateAPIView):
     serializer_class = CompanySerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    allowed_users(allowed_roles=['admin'])
+    @method_decorator(allowed_users(allowed_roles=['admin', 'management']))
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
@@ -24,7 +24,7 @@ class CompanyList(generics.ListCreateAPIView):
             serializer.save()
             return Response({"status": status.HTTP_201_CREATED, "data": serializer.data, "message": "Your details saved successfully"})
 
-    allowed_users(allowed_roles=['admin', 'Developer'])
+    @method_decorator(allowed_users(allowed_roles=['admin', 'Developer', 'management']))
     def list(self, request):
         serializer = self.get_serializer(self.get_queryset(), many=True)
 
@@ -36,7 +36,7 @@ class CompanyDetail(generics.RetrieveAPIView):
     serializer_class = CompanySerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    allowed_users(allowed_roles=['admin', 'Developer'])
+    @method_decorator(allowed_users(allowed_roles=['admin', 'Developer', 'management']))
     def retrieve(self, request, *args, **kwargs):
         serializer = self.get_serializer(self.get_object(), many=False)
         return Response({"status": status.HTTP_200_OK, "data": serializer.data, "message": "Company's Detail"})

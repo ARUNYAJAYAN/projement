@@ -13,7 +13,7 @@ class DeveloperList(generics.ListCreateAPIView):
     queryset = Developer.objects.all()
     serializer_class = DeveloperSerializer
 
-    @method_decorator(allowed_users(allowed_roles=['admin']))
+    @method_decorator(allowed_users(allowed_roles=['admin', 'management']))
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
@@ -22,7 +22,7 @@ class DeveloperList(generics.ListCreateAPIView):
             serializer.save()
             return Response({"status": status.HTTP_201_CREATED, "data": serializer.data, "message": "Your details saved successfully"})
 
-    @method_decorator(allowed_users(allowed_roles=['admin']))
+    @method_decorator(allowed_users(allowed_roles=['admin', 'management']))
     def list(self, request):
         serializer = self.get_serializer(self.get_queryset(), many=True)
 
@@ -32,7 +32,8 @@ class DeveloperList(generics.ListCreateAPIView):
 class DeveloperDetail(generics.RetrieveAPIView):
     queryset = Developer
     serializer_class = DeveloperSerializer
-    @method_decorator(allowed_users(allowed_roles=['admin', 'developer']))
+
+    @method_decorator(allowed_users(allowed_roles=['admin', 'developer', 'management']))
     def retrieve(self, request, *args, **kwargs):
         serializer = self.get_serializer(self.get_object(), many=False)
         return Response({"status": status.HTTP_200_OK, "data": serializer.data, "message": "Developer's Detail"})

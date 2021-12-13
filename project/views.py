@@ -23,7 +23,7 @@ class ProjectCreate(generics.ListCreateAPIView):
     serializer_class = ProjectSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    @method_decorator(allowed_users(allowed_roles=['admin']))
+    @method_decorator(allowed_users(allowed_roles=['admin', 'management']))
     def create(self, request):
         allowed_users(allowed_roles=['admin'])
         serializer = self.get_serializer(data=request.data)
@@ -34,7 +34,7 @@ class ProjectCreate(generics.ListCreateAPIView):
             serializer.save()
             return Response({"status": status.HTTP_201_CREATED, "data": serializer.data, "message": "Your details saved successfully"})
 
-    @method_decorator(allowed_users(allowed_roles=['admin', 'developer']))
+    @method_decorator(allowed_users(allowed_roles=['admin', 'developer', 'management']))
     def list(self, request):
         # allowed_users(request, allowed_roles=['anoop'])
         first_queryset = self.queryset.filter(end_date__gt=timezone.now().date())
@@ -50,7 +50,7 @@ class ProjectUpdate(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    @method_decorator(allowed_users(allowed_roles=['admin', 'developer']))
+    @method_decorator(allowed_users(allowed_roles=['admin', 'developer', 'management']))
     def update(self, request, pk, *args, **kwargs):
         old_data = Project.objects.filter(id=pk).first()
         serializer = self.get_serializer(data=request.data, instance=self.get_object())
@@ -69,12 +69,12 @@ class ProjectUpdate(generics.RetrieveUpdateDestroyAPIView):
                 log.save()
             return Response({"status": status.HTTP_200_OK, "data": serializer.data, "message": "Your details saved successfully"})
 
-    @method_decorator(allowed_users(allowed_roles=['admin', 'developer']))
+    @method_decorator(allowed_users(allowed_roles=['admin', 'developer', 'management']))
     def retrieve(self, request, *args, **kwargs):
         serializer = ProjectSerializer(self.get_object(), many=False)
         return Response({"status": status.HTTP_200_OK, "data": serializer.data, "message": "Project Detail"})
 
-    @method_decorator(allowed_users(allowed_roles=['admin', 'developer']))
+    @method_decorator(allowed_users(allowed_roles=['admin', 'management']))
     def destroy(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
@@ -88,7 +88,7 @@ class ListCompanyProjects(generics.ListAPIView):
     serializer_class = ProjectListSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    @method_decorator(allowed_users(allowed_roles=['admin']))
+    @method_decorator(allowed_users(allowed_roles=['admin', 'management']))
     def list(self, request, company_id, *args, **kwargs):
         queryset = Project.objects.filter(company=company_id).order_by('-end_date')
         serializer = ProjectListSerializer(queryset, many=True)
@@ -101,7 +101,7 @@ class TagCreate(generics.ListCreateAPIView):
     serializer_class = TagSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    @method_decorator(allowed_users(allowed_roles=['admin']))
+    @method_decorator(allowed_users(allowed_roles=['management']))
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
@@ -110,7 +110,7 @@ class TagCreate(generics.ListCreateAPIView):
             serializer.save()
             return Response({"status": status.HTTP_201_CREATED, "data": serializer.data, "message": "Your details saved successfully"})
 
-    @method_decorator(allowed_users(allowed_roles=['admin']))
+    @method_decorator(allowed_users(allowed_roles=['admin', 'management']))
     def list(self, request):
         serializer = TagListSerializer(self.get_queryset(), many=True)
         return Response({"status": status.HTTP_200_OK, "data": serializer.data, "message": "Project's tag list"})
@@ -121,7 +121,7 @@ class TagUpdate(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TagSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    @method_decorator(allowed_users(allowed_roles=['admin']))
+    @method_decorator(allowed_users(allowed_roles=['management']))
     def update(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data, instance=self.get_object())
 
@@ -131,12 +131,12 @@ class TagUpdate(generics.RetrieveUpdateDestroyAPIView):
             serializer.save()
             return Response({"status": status.HTTP_200_OK, "data": serializer.data, "message": "Your details saved successfully"})
 
-    @method_decorator(allowed_users(allowed_roles=['admin']))
+    @method_decorator(allowed_users(allowed_roles=['admin', 'management']))
     def retrieve(self, request, *args, **kwargs):
         serializer = TagListSerializer(self.get_object(), many=False)
         return Response({"status": status.HTTP_200_OK, "data": serializer.data, "message": "Tag's Detail"})
 
-    @method_decorator(allowed_users(allowed_roles=['admin']))
+    @method_decorator(allowed_users(allowed_roles=['admin', 'management']))
     def destroy(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
@@ -151,7 +151,7 @@ class ProjectFile(generics.ListCreateAPIView):
     serializer_class = ProjectSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    @method_decorator(allowed_users(allowed_roles=['admin']))
+    @method_decorator(allowed_users(allowed_roles=['management']))
     def list(self, request):
         queryset = Project.objects.all()
         serializer = ProjectListSerializer(queryset, many=True)
@@ -179,7 +179,7 @@ class LogList(generics.ListAPIView):
     serializer_class = LogSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    @method_decorator(allowed_users(allowed_roles=['admin']))
+    @method_decorator(allowed_users(allowed_roles=['admin', 'management']))
     def list(self, request):
         serializer = LogSerializer(self.get_queryset(), many=True)
         return Response({"status": status.HTTP_200_OK, "data": serializer.data, "message": "Log's list"})
